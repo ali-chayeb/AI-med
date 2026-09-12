@@ -1,0 +1,18 @@
+{
+  "name": "مرجع — أجوبة طبية مرتّبة",
+  "short_name": "مرجع",
+  "description": "مكتبة شخصية للأجوبة الطبية، مرتّبة حسب الجهاز ونوع السؤال.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FBFAF6",
+  "theme_color": "#FBFAF6",
+  "icons": [
+    { "src": "أيقونة.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "أيقونة-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "أيقونة-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,880 @@
+@charset "UTF-8";
+
+/* ============================================================================
+   مرجع — الأنماط
+   ============================================================================
+   يعتمد على css/tokens.css. أي لون هنا يجب أن يكون var(--…) — لونٌ مكتوب
+   مباشرةً يكسر الوضع الليلي بصمت، و`node 5-أدوات/فحص-الأنماط.mjs` يرفضه.
+
+   نقاط القطع كلها في كتلة واحدة بآخر الملف، كل نقطة مرّة واحدة، تنازليًا.
+   تفريقها في مشروع سابق أخفى تسع قواعد لم تعمل أبدًا.
+   ========================================================================== */
+
+/* ───────────────────────────── الأساس ───────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--قمة) + 18px);
+}
+
+body {
+  margin: 0;
+  background: var(--ورق);
+  color: var(--حبر);
+  font-family: var(--واجهة);
+  font-size: 14px;
+  line-height: 1.7;
+  letter-spacing: 0;            /* العربية خطّ متّصل — لا تباعد حروف أبدًا */
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+svg { fill: currentColor; stroke: none; width: 19px; height: 19px; display: block; }
+svg[stroke-width], svg [stroke-width] { fill: none; stroke: currentColor; }
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+/* الرابط يُسطَّر بظلّ داخلي لا بحدّ سفلي: الحدّ يزحزح النصّ عند التحويم. */
+a {
+  color: var(--أخضر);
+  text-decoration: none;
+  box-shadow: inset 0 -2px 0 var(--ذهبي);
+  transition: box-shadow var(--انتقال), color var(--انتقال);
+}
+a:hover { box-shadow: inset 0 -2px 0 var(--أخضر); }
+a.بلا-خط, a.بلا-خط:hover { box-shadow: none; }
+
+:focus-visible { outline: 2px solid var(--أخضر); outline-offset: 2px; }
+
+.مخفي-بصريًا {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+.تخطٍّ {
+  position: fixed; inset-inline-start: 12px; top: -60px; z-index: 90;
+  background: var(--أخضر); color: var(--ورق); padding: 11px 18px;
+  box-shadow: none;
+}
+.تخطٍّ:focus { top: 10px; }
+
+/* الكلمة الخفيفة داخل عنوان — التسلسل بالوزن لا بخطّ ثانٍ. */
+.خفيف { font-weight: 200; color: var(--حبر-خفيف); }
+
+/* ───────────────────────────── القمّة ───────────────────────────── */
+
+.قمة {
+  position: sticky; top: 0; z-index: 40;
+  height: var(--قمة);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 0 20px;
+  background: var(--ورق);
+  border-bottom: 1px solid var(--فاصل);
+}
+
+.شعار { display: flex; align-items: baseline; gap: 9px; color: var(--حبر); box-shadow: none; }
+.شعار:hover { box-shadow: none; }
+.شعار-اسم { font-size: 21px; font-weight: 600; letter-spacing: -.025em; line-height: 1; }
+.شعار-عدّاد {
+  font-size: 11.5px; font-weight: 400; color: var(--حبر-٣);
+  font-variant-numeric: tabular-nums;
+}
+
+.بحث { position: relative; max-width: 440px; width: 100%; justify-self: center; }
+.بحث input {
+  width: 100%; height: 36px;
+  padding-inline: 12px 34px;
+  background: var(--لوح);
+  border: 1px solid var(--فاصل-قوي);
+  border-radius: 2px;           /* الحقول وحدها — تخفيفًا لحدّة الحافة */
+  color: var(--حبر);
+  font: inherit; font-size: 13.5px;
+  transition: border-color var(--انتقال);
+}
+.بحث input::placeholder { color: var(--حبر-٣); }
+.بحث input:focus { outline: none; border-color: var(--أخضر); }
+.بحث input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.اختصار-البحث {
+  position: absolute; inset-inline-end: 9px; top: 50%; transform: translateY(-50%);
+  font-size: 10.5px; color: var(--حبر-٣);
+  border: 1px solid var(--فاصل); padding: 1px 6px;
+  pointer-events: none; font-variant-numeric: tabular-nums;
+}
+.بحث input:focus ~ .اختصار-البحث { opacity: 0; }
+
+.أدوات-القمة { display: flex; gap: 2px; }
+.زر-أداة {
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  color: var(--حبر-٢);
+  transition: background var(--انتقال), color var(--انتقال);
+}
+.زر-أداة:hover { background: var(--غائر); color: var(--حبر); }
+.زر-أداة[aria-pressed="true"] { background: var(--أخضر-باهت); color: var(--أخضر); }
+.أيقونة-خط { font-size: 16px; font-weight: 600; line-height: 1; }
+html[data-خط="كبير"] .أيقونة-خط { font-size: 18px; }
+html[data-خط="أكبر"] .أيقونة-خط { font-size: 20px; }
+.أيقونة-شمس { display: none; }
+html[data-وضع="ليل"] .أيقونة-قمر { display: none; }
+html[data-وضع="ليل"] .أيقونة-شمس { display: block; }
+
+/* شريط تقدّم القراءة — خطّ ذهبي ٢px أسفل القمّة مباشرةً. */
+.تقدّم {
+  position: fixed; inset-inline: 0; top: var(--قمة); z-index: 41;
+  height: 2px; background: transparent; pointer-events: none;
+}
+.تقدّم > span {
+  display: block; height: 100%; width: 0;
+  background: var(--ذهبي);
+  transition: width .1s linear;
+}
+html:not([data-صفحة="جواب"]) .تقدّم { display: none; }
+
+/* ───────────────────────────── الهيكل ───────────────────────────── */
+
+.هيكل {
+  display: grid;
+  grid-template-columns: var(--عرض-الرف) minmax(0, 1fr) var(--عرض-الهامش);
+  gap: 28px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 26px 24px 80px;
+  align-items: start;
+}
+
+/* خارج صفحة الجواب لا هامش، فيُطوى عموده بدل أن يترك فجوة. */
+html:not([data-صفحة="جواب"]) .هيكل {
+  grid-template-columns: var(--عرض-الرف) minmax(0, 1fr);
+  max-width: 1160px;
+}
+html:not([data-صفحة="جواب"]) .هامش { display: none; }
+
+/* وضع القراءة: يبقى النصّ وحده. */
+html[data-قراءة="نعم"] .رف,
+html[data-قراءة="نعم"] .هامش { display: none; }
+html[data-قراءة="نعم"] .هيكل { grid-template-columns: minmax(0, 1fr); max-width: 880px; }
+
+/* ───────────────────────────── الرفّ ───────────────────────────── */
+
+.رف {
+  position: sticky; top: calc(var(--قمة) + 26px);
+  max-height: calc(100vh - var(--قمة) - 52px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.رف::-webkit-scrollbar, .هامش::-webkit-scrollbar { width: 7px; }
+.رف::-webkit-scrollbar-thumb, .هامش::-webkit-scrollbar-thumb { background: var(--فاصل); }
+.رف::-webkit-scrollbar-track, .هامش::-webkit-scrollbar-track { background: transparent; }
+
+.رف-عنوان,
+.هامش-عنوان {
+  font-size: 11px; font-weight: 500; color: var(--حبر-٣);
+  letter-spacing: .06em;
+  padding-bottom: 9px; margin: 0 0 10px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+}
+
+.جهاز { border-bottom: 1px solid var(--فاصل-ناعم); }
+.جهاز:last-child { border-bottom: 0; }
+
+.جهاز-رأس {
+  width: 100%;
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 9px;
+  padding: 11px 10px;
+  text-align: start;
+  transition: background var(--انتقال);
+}
+.جهاز-رأس:hover { background: var(--غائر); }
+.جهاز-اسم { font-size: 14px; font-weight: 400; }
+.جهاز-عدد { font-size: 11.5px; color: var(--حبر-٣); font-variant-numeric: tabular-nums; }
+.جهاز-سهم { width: 14px; height: 14px; color: var(--حبر-٣); transition: transform var(--انتقال); }
+.جهاز[data-مفتوح="نعم"] .جهاز-سهم { transform: rotate(-90deg); }
+.جهاز[data-مفتوح="نعم"] .جهاز-اسم { font-weight: 600; }
+.جهاز-قائمة { display: none; padding-bottom: 8px; }
+.جهاز[data-مفتوح="نعم"] .جهاز-قائمة { display: block; }
+
+/* الصفّ يتنفّس عند التحويم: خطّ ذهبي داخلي مع نموّ الحاشية. */
+.صف-جواب {
+  display: grid; grid-template-columns: 15px 1fr; gap: 9px; align-items: baseline;
+  padding: 7px 12px 7px 8px;
+  margin-inline-start: 6px;
+  border-inline-start: 1px solid var(--فاصل-ناعم);
+  color: var(--حبر-٢);
+  font-size: 13px;
+  box-shadow: none;
+  transition: color var(--انتقال), padding var(--انتقال), box-shadow var(--انتقال);
+}
+.صف-جواب:hover {
+  color: var(--حبر); padding-inline-start: 18px;
+  box-shadow: inset 3px 0 0 var(--ذهبي);
+}
+.صف-جواب[aria-current="page"] {
+  color: var(--أخضر); font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--أخضر);
+}
+.صف-جواب .رمز { font-size: 11px; color: var(--حبر-٣); text-align: center; }
+.صف-جواب[aria-current="page"] .رمز { color: var(--أخضر); }
+.صف-جواب .نص { direction: ltr; text-align: start; }
+
+/* ───────────────────────────── الورقة ───────────────────────────── */
+
+.ورقة {
+  background: var(--لوح);
+  border: 1px solid var(--فاصل);
+  padding: 44px 52px 72px;
+  min-height: 60vh;
+  min-width: 0;
+}
+.ورقة:focus { outline: none; }
+
+/* ── البيت ── */
+
+.بيت-رأس { margin-bottom: 36px; }
+.بيت-عنوان {
+  font-size: 31px; font-weight: 600; letter-spacing: -.03em; line-height: 1.2;
+  margin: 0 0 10px;
+}
+.بيت-عنوان .رقم {
+  font-weight: 200; font-variant-numeric: tabular-nums;
+  color: var(--أخضر-رقم); letter-spacing: -.045em;
+}
+.بيت-وصف { color: var(--حبر-٢); font-size: 14px; margin: 0; max-width: 56ch; }
+
+.لوح-أجهزة { border: 1px solid var(--فاصل-ناعم); }
+.صف-رف {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center; gap: 20px;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  color: inherit; box-shadow: none;
+  transition: background var(--انتقال), box-shadow var(--انتقال);
+}
+.صف-رف:last-child { border-bottom: 0; }
+.صف-رف:hover { background: var(--غائر); box-shadow: inset 3px 0 0 var(--ذهبي); }
+.صف-رف-اسم { font-size: 15px; font-weight: 500; letter-spacing: -.015em; }
+.صف-رف-أنواع {
+  display: flex; gap: 14px;
+  direction: ltr;                /* «# 2» تُقرأ هكذا لا معكوسة داخل سياق RTL */
+  font-size: 11.5px; color: var(--حبر-٣); font-variant-numeric: tabular-nums;
+}
+.صف-رف-عدد {
+  font-size: 19px; font-weight: 200; letter-spacing: -.04em;
+  color: var(--أخضر-رقم); font-variant-numeric: tabular-nums;
+  min-width: 2.2ch; text-align: end;
+}
+
+.قسم-بيت { margin-top: 42px; }
+.قسم-بيت-عنوان {
+  font-size: 11px; font-weight: 500; color: var(--حبر-٣); letter-spacing: .06em;
+  padding-bottom: 10px; margin: 0 0 2px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
+}
+/* اللوحة المعلَّمة: خطّ ذهبي فوق ما يجب أن يُرى أولًا. */
+.قسم-بيت--معلَّم .قسم-بيت-عنوان { border-top: 2px solid var(--ذهبي); padding-top: 12px; }
+
+.سطر-جواب {
+  display: grid; grid-template-columns: 19px minmax(0, 1fr) auto;
+  gap: 14px; align-items: baseline;
+  padding: 13px 6px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  color: inherit; box-shadow: none;
+  transition: background var(--انتقال), box-shadow var(--انتقال);
+}
+.سطر-جواب:hover { background: var(--غائر); box-shadow: inset 3px 0 0 var(--ذهبي); }
+.سطر-جواب .رمز { font-size: 12px; color: var(--حبر-٣); text-align: center; }
+.سطر-جواب .عنوان { direction: ltr; text-align: start; font-size: 14.5px; }
+.سطر-جواب .فرع { color: var(--حبر-٣); font-size: 11.5px; }
+
+.لا-شيء { color: var(--حبر-٢); font-size: 13.5px; padding: 26px 0; }
+.لا-شيء code, .بيت-وصف code {
+  font-family: var(--واجهة); font-size: .92em;
+  background: var(--غائر); border: 1px solid var(--فاصل-ناعم);
+  padding: 1px 6px; direction: ltr; display: inline-block;
+}
+
+/* ── ختم الحداثة: القاعدة 8a مرئية ── */
+
+.ختم {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11.5px; font-variant-numeric: tabular-nums;
+  padding: 3px 10px;
+  border: 1px solid var(--فاصل-قوي);
+  border-radius: 999px;          /* الحبّات وحدها تبقى دائرية */
+  color: var(--حبر-٢);
+  white-space: nowrap;
+}
+.ختم::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--أخضر); flex: none;
+}
+.ختم[data-دليل] { direction: ltr; }
+.ختم[data-حالة="قديم"] {
+  color: var(--كهرمان); border-color: var(--ذهبي); background: var(--كهرمان-باهت);
+}
+.ختم[data-حالة="قديم"]::before { background: var(--كهرمان); }
+
+/* ───────────────────────────── الجواب ───────────────────────────── */
+
+.جواب-رأس { padding-bottom: 22px; border-bottom: 1px solid var(--فاصل); margin-bottom: 32px; }
+
+.جواب-مسار {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 11.5px; color: var(--حبر-٣); margin: 0 0 14px;
+}
+.جواب-مسار a { color: inherit; box-shadow: none; }
+.جواب-مسار a:hover { color: var(--حبر); box-shadow: inset 0 -2px 0 var(--ذهبي); }
+
+.جواب-عنوان {
+  direction: ltr; text-align: start;
+  font-size: 33px; font-weight: 600; letter-spacing: -.03em; line-height: 1.18;
+  margin: 0 0 6px;
+}
+.جواب-عربي { font-size: 15px; font-weight: 400; color: var(--حبر-٢); margin: 0 0 18px; }
+.جواب-شارات { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* متن الجواب — إنجليزي، LTR، خطّ قراءة طويلة */
+.متن {
+  direction: ltr; text-align: start;
+  font-family: var(--متن);
+  font-size: var(--قياس-المتن);
+  line-height: var(--سطر-المتن);
+  max-width: var(--عرض-القراءة);
+  color: var(--حبر);
+}
+.متن p { margin: 0 0 1.05em; }
+.متن > :last-child { margin-bottom: 0; }
+
+.قسم { scroll-margin-top: calc(var(--قمة) + 22px); padding-top: 8px; }
+.قسم + .قسم { margin-top: 42px; }
+
+.قسم-عنوان {
+  direction: ltr; text-align: start;
+  font-family: var(--واجهة);
+  font-size: 16px; font-weight: 600; letter-spacing: -.015em; line-height: 1.4;
+  color: var(--حبر);
+  margin: 0 0 18px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  display: flex; align-items: baseline; gap: 12px;
+}
+.قسم-رقم {
+  font-size: 11.5px; font-weight: 400; color: var(--حبر-٣);
+  font-variant-numeric: tabular-nums; flex: none;
+}
+
+/* قسم Red Flags — الأحمر الوحيد في الموقع، وبحدّ جانبي لا بلوحة ملوّنة. */
+.قسم[data-إنذار] .قسم-عنوان { color: var(--إنذار); border-bottom-color: var(--إنذار); }
+.قسم[data-إنذار] .قسم-رقم { color: var(--إنذار); }
+.قسم[data-إنذار] .متن {
+  border-inline-start: 4px solid var(--إنذار);
+  padding-inline-start: 20px;
+  margin-inline-start: -24px;
+}
+
+.متن h3 { font-family: var(--واجهة); font-size: 15px; font-weight: 600; letter-spacing: -.01em; margin: 1.8em 0 .6em; }
+.متن h4 { font-family: var(--واجهة); font-size: 13.5px; font-weight: 500; color: var(--حبر-٢); margin: 1.5em 0 .45em; }
+.متن ul, .متن ol { margin: 0 0 1.05em; padding-inline-start: 1.35em; }
+.متن li { margin-bottom: .45em; }
+.متن li > ul, .متن li > ol { margin: .45em 0 .2em; }
+.متن strong { font-weight: 700; }
+.متن em { font-style: italic; }
+.متن hr { border: 0; border-top: 1px solid var(--فاصل-ناعم); margin: 2em 0; }
+.متن blockquote {
+  margin: 1.4em 0; padding: 2px 0 2px 18px;
+  border-inline-start: 2px solid var(--ذهبي);
+  color: var(--حبر-٢);
+}
+.متن code {
+  font-family: var(--واجهة); font-size: .82em;
+  background: var(--غائر); border: 1px solid var(--فاصل-ناعم);
+  padding: 1px 5px; font-variant-numeric: tabular-nums;
+}
+.متن a { color: var(--أخضر); }
+
+/* الصور */
+.متن figure { margin: 1.9em 0; }
+.متن img {
+  display: block; max-width: 100%; height: auto;
+  border: 1px solid var(--فاصل-ناعم);
+  background: var(--لوح);
+}
+.متن figcaption {
+  font-family: var(--واجهة); font-size: 12px; line-height: 1.55;
+  color: var(--حبر-٢); padding-top: 9px;
+  border-top: 1px solid var(--فاصل-ناعم); margin-top: 9px;
+}
+
+/* الجداول — عنصر أول في المحتوى الطبي لا ثانوي */
+.لفافة-جدول { overflow-x: auto; margin: 1.6em 0; max-width: 100%; }
+.متن table {
+  border-collapse: collapse; width: 100%;
+  font-family: var(--واجهة); font-size: 13px; line-height: 1.55;
+}
+.متن th, .متن td {
+  text-align: start; vertical-align: top;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+}
+.متن thead th {
+  font-weight: 600; font-size: 11.5px; letter-spacing: .02em;
+  color: var(--حبر-٢);
+  background: var(--ورق-٢);
+  border-bottom: 1px solid var(--فاصل-قوي);
+  white-space: nowrap;
+  position: sticky; top: 0;
+}
+.متن tbody tr:last-child td { border-bottom: 0; }
+.متن td { font-variant-numeric: tabular-nums; }
+
+/* الاستشهاد */
+.استشهاد {
+  font-size: .66em; vertical-align: .38em; line-height: 0;
+  padding: 0 1px; margin-inline-start: 1px;
+  color: var(--أخضر); font-variant-numeric: tabular-nums;
+  box-shadow: none; font-family: var(--واجهة);
+}
+.استشهاد:hover { box-shadow: inset 0 -2px 0 var(--ذهبي); }
+
+/* ───────────────────────── كتل عقد التأليف ─────────────────────────
+   من TEMPLATE-SPEC v1. كل لون هنا يحمل معنى سريريًا، لا زينة:
+   إنذار = خطر · دليل = إعلان غايدلاين · تحذير = توفّر محلي ·
+   جودة = تعليق على قوة الدليل · مفتاح = النقطة الواحدة التي تُحمل.
+   والتمييز بحدّ جانبي وأرضية باهتة جدًا — لا بلوحة ملوّنة صارخة. */
+
+.كتلة {
+  margin: 1.7em 0;
+  padding: 14px 18px;
+  border-inline-start: 4px solid var(--فاصل-قوي);
+  background: var(--ورق-٢);
+}
+.كتلة > :first-child { margin-top: 0; }
+.كتلة > :last-child { margin-bottom: 0; }
+
+.كتلة-عنوان {
+  font-family: var(--واجهة);
+  font-size: 12px; font-weight: 600; letter-spacing: .04em;
+  margin: 0 0 8px;
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+
+.كتلة.إنذار  { border-inline-start-color: var(--إنذار);  background: var(--إنذار-باهت); }
+.كتلة.دليل   { border-inline-start-color: var(--أخضر);   background: var(--أخضر-باهت); }
+.كتلة.تحذير  { border-inline-start-color: var(--كهرمان); background: var(--كهرمان-باهت); }
+.كتلة.جودة   { border-inline-start-color: var(--بنفسجي); background: var(--بنفسجي-باهت); }
+.كتلة.مفتاح  { border-inline-start-color: var(--إنذار);  background: var(--لوح); border-block: 1px solid var(--فاصل-ناعم); }
+.كتلة.محايد  { border-inline-start-color: var(--فاصل-قوي); }
+.كتلة.تحقّق  { border-inline-start-color: var(--ذهبي); background: var(--لوح); border-block: 1px solid var(--فاصل-ناعم); }
+
+.كتلة.إنذار  > .كتلة-عنوان { color: var(--إنذار); }
+.كتلة.دليل   > .كتلة-عنوان { color: var(--أخضر); }
+.كتلة.تحذير  > .كتلة-عنوان { color: var(--كهرمان); }
+.كتلة.جودة   > .كتلة-عنوان { color: var(--بنفسجي); }
+.كتلة.مفتاح  > .كتلة-عنوان { color: var(--إنذار); }
+.كتلة.محايد  > .كتلة-عنوان,
+.كتلة.تحقّق  > .كتلة-عنوان { color: var(--حبر-٢); }
+
+/* الآلية: تسمية أحادية ثم نصّها، على حدّ مرسوم */
+.كتلة.آلية { background: var(--لوح); border-inline-start-color: var(--فاصل-قوي); }
+.آلية-بند {
+  display: grid; grid-template-columns: minmax(0, 10em) minmax(0, 1fr);
+  gap: 4px 14px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+}
+.آلية-بند:last-child { border-bottom: 0; }
+.آلية-تسمية {
+  font-family: var(--واجهة); font-size: 11.5px; font-weight: 600;
+  color: var(--حبر-٢); letter-spacing: .02em;
+  padding-top: .18em;
+}
+
+/* المجموعة القابلة للطيّ */
+details.مجموعة { background: var(--لوح); border-inline-start-color: var(--ذهبي); padding: 0; }
+details.مجموعة > summary {
+  padding: 13px 18px; cursor: pointer; list-style: none;
+  display: flex; flex-direction: column; gap: 3px;
+}
+details.مجموعة > summary::-webkit-details-marker { display: none; }
+details.مجموعة > summary:hover { background: var(--غائر); }
+.مجموعة-حاشية { font-size: 10.5px; color: var(--حبر-٣); letter-spacing: .08em; }
+details.مجموعة[open] > summary { border-bottom: 1px solid var(--فاصل-ناعم); }
+.مجموعة-جسم { padding: 4px 18px 14px; }
+
+/* البند المرقَّم */
+.كتلة.بند { background: none; border-inline-start-color: var(--فاصل); padding: 2px 0 2px 18px; }
+.بند-عنوان {
+  font-family: var(--واجهة); font-size: 14.5px; font-weight: 600; letter-spacing: -.01em;
+  margin: .6em 0 .5em;
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+.بند-رقم {
+  font-size: 11.5px; font-weight: 400; color: var(--حبر-٣);
+  font-variant-numeric: tabular-nums;
+}
+
+/* الاختبار الذاتي — الأجوبة محجوبة عمدًا */
+.كتلة.اختبار { background: var(--لوح); border-inline-start-color: var(--أخضر); }
+.كتلة.اختبار > .كتلة-عنوان { color: var(--أخضر); justify-content: space-between; }
+.اختبار-عدّاد { font-size: 11px; color: var(--حبر-٣); font-variant-numeric: tabular-nums; }
+.سؤال {
+  display: grid; grid-template-columns: 22px 22px minmax(0, 1fr); gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  cursor: pointer;
+}
+.سؤال:last-of-type { border-bottom: 0; }
+.سؤال input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--أخضر); }
+.سؤال-رقم { font-size: 12px; color: var(--حبر-٣); font-variant-numeric: tabular-nums; padding-top: .2em; }
+.سؤال:has(input:checked) > span:last-child { color: var(--حبر-٣); text-decoration: line-through; }
+.اختبار-ملحوظة { font-family: var(--واجهة); font-size: 11.5px; color: var(--حبر-٣); margin: 12px 0 0; }
+
+/* وسوم الدليل — تُعرّف نفسها عند اللمس */
+.وسم-دليل {
+  font-family: var(--واجهة); font-size: 10.5px; font-weight: 600;
+  line-height: 1; vertical-align: .12em;
+  padding: 3px 5px; margin-inline: 2px;
+  border: 1px solid var(--فاصل-قوي);
+  color: var(--حبر-٢);
+  white-space: nowrap;
+}
+.وسم-دليل:hover { border-color: var(--أخضر); color: var(--أخضر); }
+.وسم-دليل[data-وسم="?"] { color: var(--كهرمان); border-color: var(--ذهبي); }
+.وسم-دليل[data-وسم="G"] { color: var(--أخضر); }
+.وسم-دليل[data-وسم="L"] { color: var(--بنفسجي); border-color: var(--بنفسجي); }
+
+.متن pre {
+  background: var(--غائر); border: 1px solid var(--فاصل-ناعم);
+  padding: 12px 14px; overflow-x: auto;
+  font-size: .82em; line-height: 1.5;
+}
+.متن pre code { background: none; border: 0; padding: 0; }
+.متن del { color: var(--حبر-٣); }
+
+.جواب-ملخص {
+  font-family: var(--متن); font-size: 15px; line-height: 1.55;
+  color: var(--حبر-٢); margin: 0 0 18px; max-width: 62ch;
+  direction: ltr; text-align: start;
+}
+
+/* الهمسة: شرح وسم الدليل عند لمسه */
+.همسة {
+  position: fixed; z-index: 80;
+  max-width: min(280px, calc(100vw - 24px));
+  padding: 9px 13px;
+  background: var(--حبر); color: var(--ورق);
+  font-family: var(--واجهة); font-size: 12px; line-height: 1.5;
+  box-shadow: var(--ظل-طافٍ);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--انتقال);
+}
+.همسة[data-ظاهر] { opacity: 1; }
+
+/* ───────────────────────────── التظليل ───────────────────────────── */
+
+/* ألوان القارئ. لا تستعملها الواجهة لنفسها في أي موضع. */
+mark.تظليل { color: inherit; padding: 1px 0; cursor: pointer; border-radius: 0; }
+mark.تظليل[data-قلم="أصفر"] { background: var(--قلم-أصفر); }
+mark.تظليل[data-قلم="أخضر"] { background: var(--قلم-أخضر); }
+mark.تظليل[data-قلم="أزرق"] { background: var(--قلم-أزرق); }
+mark.تظليل[data-قلم="وردي"] { background: var(--قلم-وردي); }
+
+.لوح-أقلام {
+  position: fixed; z-index: 70;   /* إحداثيات المنفذ — getBoundingClientRect مباشرةً */
+  display: none;
+  align-items: center; gap: 2px;
+  padding: 5px;
+  background: var(--لوح);
+  border: 1px solid var(--فاصل-قوي);
+  box-shadow: var(--ظل-طافٍ);   /* يطفو فعلًا، فله ارتفاع */
+}
+.لوح-أقلام[data-ظاهر] { display: flex; }
+.قلم {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  transition: transform var(--انتقال);
+}
+.قلم > span {
+  width: 20px; height: 20px; display: block;
+  border: 1px solid var(--فاصل-قوي);
+}
+.قلم:hover { transform: scale(1.08); }
+.قلم[data-قلم="أصفر"] > span { background: var(--قلم-أصفر); }
+.قلم[data-قلم="أخضر"] > span { background: var(--قلم-أخضر); }
+.قلم[data-قلم="أزرق"] > span { background: var(--قلم-أزرق); }
+.قلم[data-قلم="وردي"] > span { background: var(--قلم-وردي); }
+.قلم--محو > span {
+  background: var(--غائر);
+  display: grid; place-items: center;
+  color: var(--حبر-٢);
+}
+.قلم--محو svg { width: 13px; height: 13px; }
+
+/* قائمة التظليلات في الهامش */
+.تظليل-سطر {
+  display: grid; grid-template-columns: 3px minmax(0, 1fr); gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  width: 100%; text-align: start;
+}
+.تظليل-سطر:last-child { border-bottom: 0; }
+.تظليل-لون { width: 3px; }
+.تظليل-لون[data-قلم="أصفر"] { background: var(--قلم-أصفر); }
+.تظليل-لون[data-قلم="أخضر"] { background: var(--قلم-أخضر); }
+.تظليل-لون[data-قلم="أزرق"] { background: var(--قلم-أزرق); }
+.تظليل-لون[data-قلم="وردي"] { background: var(--قلم-وردي); }
+.تظليل-نص {
+  direction: ltr; text-align: start;
+  font-family: var(--متن); font-size: 12.5px; line-height: 1.5;
+  color: var(--حبر-٢);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.تظليل-سطر:hover .تظليل-نص { color: var(--حبر); }
+
+/* ───────────────────────────── الهامش ───────────────────────────── */
+
+.هامش {
+  position: sticky; top: calc(var(--قمة) + 26px);
+  max-height: calc(100vh - var(--قمة) - 52px);
+  overflow-y: auto; overscroll-behavior: contain;
+  font-size: 12.5px;
+}
+.هامش-كتلة + .هامش-كتلة { margin-top: 32px; }
+
+/* العمود الفقري: فهرسٌ يُظهر الموضع والطول معًا. */
+.عمود-فقري { display: flex; flex-direction: column; gap: 3px; }
+.فقرة {
+  display: grid; grid-template-columns: 3px minmax(0, 1fr); gap: 11px;
+  text-align: start; color: var(--حبر-٣);
+  transition: color var(--انتقال);
+}
+.فقرة-شريط { background: var(--فاصل-قوي); transition: background var(--انتقال); }
+.فقرة-اسم {
+  direction: ltr; text-align: start;
+  font-size: 12px; line-height: 1.45; padding: 1px 0 5px;
+  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.فقرة:hover { color: var(--حبر-٢); }
+.فقرة:hover .فقرة-شريط { background: var(--ذهبي); }
+.فقرة[aria-current="true"] { color: var(--حبر); font-weight: 500; }
+.فقرة[aria-current="true"] .فقرة-شريط { background: var(--أخضر); }
+.فقرة[data-إنذار] .فقرة-شريط { background: var(--إنذار-باهت); }
+.فقرة[data-إنذار][aria-current="true"] .فقرة-شريط,
+.فقرة[data-إنذار]:hover .فقرة-شريط { background: var(--إنذار); }
+.فقرة[data-إنذار][aria-current="true"] { color: var(--إنذار); }
+
+/* المصادر */
+.مصدر {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 7px;
+  padding: 8px 7px; margin-inline: -7px;
+  direction: ltr; text-align: start;
+  color: var(--حبر-٢); font-size: 11.5px; line-height: 1.5;
+  scroll-margin-top: 18px;
+  transition: background var(--انتقال), box-shadow var(--انتقال);
+}
+.مصدر-رقم { color: var(--حبر-٣); font-variant-numeric: tabular-nums; }
+.مصدر a { word-break: break-word; }
+.مصدر[data-مُبرز] {
+  background: var(--أخضر-باهت); color: var(--حبر);
+  box-shadow: inset 3px 0 0 var(--أخضر);
+}
+.مصدر[data-مُبرز] .مصدر-رقم { color: var(--أخضر); }
+
+/* ───────────────────────────── البحث ───────────────────────────── */
+
+.نتائج-البحث {
+  position: fixed; inset: var(--قمة) 0 0; z-index: 45;
+  background: var(--ورق);
+  overflow-y: auto;
+  padding: 22px 22px 80px;
+}
+.نتائج-داخل {
+  max-width: 680px; margin: 0 auto;
+  background: var(--لوح); border: 1px solid var(--فاصل);
+}
+.نتيجة {
+  display: grid; grid-template-columns: 20px minmax(0, 1fr) auto;
+  gap: 14px; align-items: baseline;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+  color: inherit; box-shadow: none;
+  transition: background var(--انتقال), box-shadow var(--انتقال);
+}
+.نتيجة:last-child { border-bottom: 0; }
+.نتيجة:hover, .نتيجة[data-مُحدّد] { background: var(--غائر); box-shadow: inset 3px 0 0 var(--ذهبي); }
+.نتيجة .رمز { font-size: 12px; color: var(--حبر-٣); text-align: center; }
+.نتيجة .عنوان { direction: ltr; text-align: start; font-size: 14.5px; }
+.نتيجة .فرع { font-size: 11.5px; color: var(--حبر-٣); }
+.نتيجة mark { background: var(--أخضر-باهت); color: inherit; padding: 0 2px; }
+.بحث-فارغ { padding: 40px 20px; text-align: center; color: var(--حبر-٢); font-size: 13.5px; }
+
+/* ───────────────────────────── الجوّال ───────────────────────────── */
+/* شريط سفليّ في متناول الإبهام، وألواح تنزلق من الأسفل. الشاشة التي يُقرأ
+   عليها هذا الموقع فعلًا هاتفٌ بيد واحدة في مناوبة، لا حاسوب على مكتب. */
+
+.شريط-جوال {
+  display: none;
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 55;
+  height: calc(var(--شريط-سفلي) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--ورق);
+  border-top: 1px solid var(--فاصل);
+  grid-auto-flow: column; grid-auto-columns: 1fr;
+}
+.زر-شريط {
+  display: grid; place-items: center; gap: 3px;
+  color: var(--حبر-٢); font-size: 10.5px;
+  padding: 6px 0 4px;
+  min-height: 48px;                 /* هدف لمس حقيقي */
+  transition: color var(--انتقال);
+}
+.زر-شريط[aria-expanded="true"], .زر-شريط[aria-pressed="true"] {
+  color: var(--أخضر); box-shadow: inset 0 2px 0 var(--أخضر);
+}
+.زر-شريط:disabled { color: var(--حبر-٣); opacity: .45; }
+
+.ستارة {
+  position: fixed; inset: 0; z-index: 56;
+  background: var(--ستارة-لون);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--انتقال);
+}
+.ستارة[data-ظاهر] { opacity: 1; pointer-events: auto; }
+
+.لوح-سفلي {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 57;
+  max-height: 78vh;
+  display: flex; flex-direction: column;
+  background: var(--ورق);
+  border-top: 2px solid var(--ذهبي);
+  transform: translateY(101%);
+  transition: transform .22s ease;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.لوح-سفلي[data-ظاهر] { transform: translateY(0); }
+.لوح-سفلي-رأس {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--فاصل);
+  flex: none;
+}
+.لوح-سفلي-عنوان { font-size: 14px; font-weight: 600; letter-spacing: -.015em; }
+.لوح-سفلي-جسم { overflow-y: auto; overscroll-behavior: contain; padding: 12px 18px 22px; }
+.زر-إغلاق { width: 40px; height: 40px; display: grid; place-items: center; color: var(--حبر-٢); }
+
+/* صفوف الإعدادات داخل اللوح السفلي */
+.صف-إعداد {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--فاصل-ناعم);
+}
+.صف-إعداد:last-child { border-bottom: 0; }
+.صف-إعداد-اسم { font-size: 14px; }
+.صف-إعداد-شرح { font-size: 11.5px; color: var(--حبر-٣); margin-top: 2px; }
+.مجموعة-خيارات { display: flex; border: 1px solid var(--فاصل-قوي); flex: none; }
+.خيار {
+  min-width: 48px; min-height: 42px; padding: 0 14px;
+  display: grid; place-items: center;
+  border-inline-start: 1px solid var(--فاصل-قوي);
+  color: var(--حبر-٢); font-size: 13px;
+}
+.خيار:first-child { border-inline-start: 0; }
+.خيار[aria-pressed="true"] { background: var(--أخضر); color: var(--ورق); }
+
+/* ───────────────────────────── الطباعة ───────────────────────────── */
+/* تصدير PDF يبقى ممكنًا كما كنت تفعل: Cmd+P ← حفظ كـ PDF. */
+
+@media print {
+  :root { --قياس-المتن: 11pt; --عرض-القراءة: none; }
+  .قمة, .رف, .هامش, .شريط-جوال, .لوح-سفلي, .ستارة, .نتائج-البحث,
+  .تخطٍّ, .لوح-أقلام, .تقدّم { display: none !important; }
+  body { background: #fff; color: #000; }
+  .هيكل { display: block; max-width: none; padding: 0; }
+  .ورقة { border: 0; padding: 0; background: #fff; }
+  .متن { max-width: none; font-size: 11pt; line-height: 1.45; }
+  .قسم-عنوان { break-after: avoid; page-break-after: avoid; }
+  .متن table, .متن li, .متن blockquote, .متن figure { break-inside: avoid; }
+  /* لا لون في الطباعة: بعض الطابعات رمادية، والحدّ الجانبي يصل دائمًا. */
+  .قسم[data-إنذار] .قسم-عنوان { color: #000; border-bottom-color: #000; }
+  .قسم[data-إنذار] .متن { border-inline-start: 3pt solid #000; }
+  mark.تظليل { background: none; box-shadow: inset 0 -2px 0 #999; }
+  .استشهاد { color: #000; }
+  .مصادر-للطباعة { display: block !important; margin-top: 26pt; border-top: 1pt solid #000; padding-top: 10pt; }
+}
+.مصادر-للطباعة { display: none; }
+
+/* ───────────────────────────── نقاط القطع ─────────────────────────────
+   كتلة واحدة، كل نقطة مرّة واحدة، تنازليًا. لا تُضف نقطة في مكان آخر. */
+
+@media (max-width: 1240px) {
+  :root { --عرض-الهامش: 230px; --عرض-الرف: 232px; }
+  .ورقة { padding: 38px 38px 64px; }
+  .هيكل { gap: 22px; }
+}
+
+@media (max-width: 1040px) {
+  .هيكل, html:not([data-صفحة="جواب"]) .هيكل { grid-template-columns: var(--عرض-الرف) minmax(0, 1fr); }
+  .هامش { display: none; }
+}
+
+@media (max-width: 820px) {
+  :root { --قمة: 52px; }
+
+  .قمة { grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; padding: 0 12px; }
+  .شعار-عدّاد, .اختصار-البحث { display: none; }
+  .زر-أداة { width: 42px; height: 42px; }
+  /* أدوات القمّة تنتقل إلى الشريط السفلي: تبقى في الأعلى أيقونة الليل وحدها */
+  .أدوات-القمة .زر-أداة:not(#زر-الليل) { display: none; }
+
+  .هيكل,
+  html:not([data-صفحة="جواب"]) .هيكل,
+  html[data-قراءة="نعم"] .هيكل {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 0 calc(var(--شريط-سفلي) + env(safe-area-inset-bottom) + 12px);
+    gap: 0; max-width: none;
+  }
+  .رف { display: none; }
+  .ورقة { border-inline: 0; border-top: 0; padding: 22px 18px 44px; }
+  .متن { max-width: none; }
+  .قسم[data-إنذار] .متن { margin-inline-start: 0; padding-inline-start: 14px; }
+  .قسم + .قسم { margin-top: 34px; }
+
+  .جواب-عنوان { font-size: 26px; }
+  .بيت-عنوان { font-size: 24px; }
+  .بيت-رأس { margin-bottom: 26px; }
+  .ورقة .قسم-بيت { margin-top: 34px; }
+
+  .صف-رف { padding: 16px 14px; }
+  .سطر-جواب { padding: 15px 4px; grid-template-columns: 19px minmax(0,1fr); }
+  .سطر-جواب .فرع:last-child { display: none; }
+
+  .نتائج-البحث { padding: 14px 12px calc(var(--شريط-سفلي) + 40px); }
+  .نتيجة { padding: 16px 14px; }
+
+  .شريط-جوال { display: grid; }
+
+  /* التظليل باللمس: هدف أكبر، ولوح ألوان أعرض. */
+  .قلم { width: 44px; height: 44px; }
+  .قلم > span { width: 24px; height: 24px; }
+}
+
+@media (max-width: 400px) {
+  .ورقة { padding: 18px 14px 40px; }
+  .جواب-عنوان { font-size: 23px; }
+  .زر-شريط { font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
