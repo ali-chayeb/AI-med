@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مرجع — أجوبة طبية مرتّبة</title>
+<meta name="description" content="مكتبة شخصية للأجوبة الطبية، مرتّبة حسب الجهاز ونوع السؤال.">
+<meta name="theme-color" content="#FBFAF6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="مرجع">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="أيقونة-512.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B2F25'/><path d='M8 23V9h3.4l4.6 8 4.6-8H24v14h-2.9v-8.7L16.8 22h-1.6l-4.3-7.7V23z' fill='%23FBFAF6'/></svg>">
+<link rel="preload" as="font" type="font/woff2" href="خطوط/IBMPlexSansArabic-400-arabic.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="خطوط/IBMPlexSansArabic-600-arabic.woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css?v=mtxw1pdv">
+<link rel="stylesheet" href="css/tokens.css?v=mtxw1pdv">
+<link rel="stylesheet" href="css/app.css?v=mtxw1pdv">
+</head>
+<body>
+
+<a class="تخطٍّ" href="#المحتوى">تخطَّ إلى المحتوى</a>
+
+<header class="قمة">
+  <a class="شعار" href="#/" aria-label="الصفحة الرئيسية">
+    <span class="شعار-اسم">مرجع</span>
+    <span class="شعار-عدّاد" id="عدّاد-الشعار"></span>
+  </a>
+
+  <form class="بحث" role="search" id="نموذج-البحث" autocomplete="off">
+    <label class="مخفي-بصريًا" for="حقل-البحث">ابحث في الأجوبة</label>
+    <input type="search" id="حقل-البحث" placeholder="ابحث بالاسم أو المصطلح…" spellcheck="false">
+    <kbd class="اختصار-البحث">/</kbd>
+  </form>
+
+  <div class="أدوات-القمة">
+    <button class="زر-أداة" id="زر-الخط" title="حجم النص" aria-label="حجم النص">
+      <span class="أيقونة-خط">أ</span>
+    </button>
+    <button class="زر-أداة" id="زر-القراءة" title="وضع القراءة" aria-label="وضع القراءة" aria-pressed="false">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 4h6a2 2 0 0 1 2 2v10a1.6 1.6 0 0 0-1.4-1H3zM17 4h-6a2 2 0 0 0-2 2v10a1.6 1.6 0 0 1 1.4-1H17z"/></svg>
+    </button>
+    <button class="زر-أداة" id="زر-الليل" title="الوضع الليلي" aria-label="الوضع الليلي" aria-pressed="false">
+      <svg viewBox="0 0 20 20" aria-hidden="true" class="أيقونة-قمر"><path d="M16.5 12.6A7 7 0 0 1 7.4 3.5a7 7 0 1 0 9.1 9.1z"/></svg>
+      <svg viewBox="0 0 20 20" aria-hidden="true" class="أيقونة-شمس"><circle cx="10" cy="10" r="4"/><path d="M10 1v2M10 17v2M1 10h2M17 10h2M3.6 3.6l1.4 1.4M15 15l1.4 1.4M16.4 3.6L15 5M5 15l-1.4 1.4" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="تقدّم" aria-hidden="true"><span id="شريط-التقدّم"></span></div>
+
+<div class="هيكل" id="الهيكل">
+  <nav class="رف" id="الرف" aria-label="فهرس الأجوبة">
+    <div id="محتوى-الرف"></div>
+  </nav>
+
+  <main class="ورقة" id="المحتوى" tabindex="-1"></main>
+
+  <aside class="هامش" id="الهامش" aria-label="هيكل الجواب ومصادره"></aside>
+</div>
+
+<div class="نتائج-البحث" id="نتائج-البحث" hidden></div>
+
+<!-- لوح أقلام التظليل — يظهر عند تحديد نصّ داخل الجواب -->
+<div class="لوح-أقلام" id="لوح-الأقلام" role="toolbar" aria-label="تظليل النص">
+  <button class="قلم" data-قلم="أصفر" aria-label="تظليل أصفر"><span></span></button>
+  <button class="قلم" data-قلم="أخضر" aria-label="تظليل أخضر"><span></span></button>
+  <button class="قلم" data-قلم="أزرق" aria-label="تظليل أزرق"><span></span></button>
+  <button class="قلم" data-قلم="وردي" aria-label="تظليل وردي"><span></span></button>
+  <button class="قلم قلم--محو" data-قلم="محو" aria-label="إزالة التظليل">
+    <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></span>
+  </button>
+</div>
+
+<!-- شريط الجوّال: في متناول الإبهام -->
+<nav class="شريط-جوال" id="شريط-الجوال" aria-label="التنقّل">
+  <button class="زر-شريط" data-لوح="لوح-الفهرس" aria-expanded="false">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h9" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>
+    <span>الفهرس</span>
+  </button>
+  <button class="زر-شريط" data-لوح="لوح-الأقسام" aria-expanded="false">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4v12M8 4v7M12 4v12M16 4v5" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>
+    <span>الأقسام</span>
+  </button>
+  <button class="زر-شريط" data-لوح="لوح-التظليل" aria-expanded="false">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 16h14" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M6 13l7-8 3 3-7 8H6z" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>
+    <span>تظليلاتي</span>
+  </button>
+  <button class="زر-شريط" data-لوح="لوح-الإعدادات" aria-expanded="false">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.6" stroke-width="1.6" fill="none"/><path d="M10 2.4v2M10 15.6v2M2.4 10h2M15.6 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M15.4 4.6L14 6M6 14l-1.4 1.4" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+    <span>إعدادات</span>
+  </button>
+</nav>
+
+<div class="ستارة" id="الستارة"></div>
+
+<section class="لوح-سفلي" id="لوح-الفهرس" aria-hidden="true">
+  <div class="لوح-سفلي-رأس">
+    <span class="لوح-سفلي-عنوان">الفهرس</span>
+    <button class="زر-إغلاق" data-إغلاق aria-label="إغلاق"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></button>
+  </div>
+  <div class="لوح-سفلي-جسم" id="جسم-الفهرس"></div>
+</section>
+
+<section class="لوح-سفلي" id="لوح-الأقسام" aria-hidden="true">
+  <div class="لوح-سفلي-رأس">
+    <span class="لوح-سفلي-عنوان">أقسام الجواب</span>
+    <button class="زر-إغلاق" data-إغلاق aria-label="إغلاق"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></button>
+  </div>
+  <div class="لوح-سفلي-جسم" id="جسم-الأقسام"></div>
+</section>
+
+<section class="لوح-سفلي" id="لوح-التظليل" aria-hidden="true">
+  <div class="لوح-سفلي-رأس">
+    <span class="لوح-سفلي-عنوان">تظليلاتي</span>
+    <button class="زر-إغلاق" data-إغلاق aria-label="إغلاق"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></button>
+  </div>
+  <div class="لوح-سفلي-جسم" id="جسم-التظليل"></div>
+</section>
+
+<section class="لوح-سفلي" id="لوح-الإعدادات" aria-hidden="true">
+  <div class="لوح-سفلي-رأس">
+    <span class="لوح-سفلي-عنوان">إعدادات القراءة</span>
+    <button class="زر-إغلاق" data-إغلاق aria-label="إغلاق"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></button>
+  </div>
+  <div class="لوح-سفلي-جسم">
+    <div class="صف-إعداد">
+      <div>
+        <div class="صف-إعداد-اسم">حجم النص</div>
+        <div class="صف-إعداد-شرح">يُحفظ لكل الأجوبة</div>
+      </div>
+      <div class="مجموعة-خيارات" id="خيارات-الخط">
+        <button class="خيار" data-خط="عادي" aria-pressed="false">عادي</button>
+        <button class="خيار" data-خط="كبير" aria-pressed="false">كبير</button>
+        <button class="خيار" data-خط="أكبر" aria-pressed="false">أكبر</button>
+      </div>
+    </div>
+    <div class="صف-إعداد">
+      <div>
+        <div class="صف-إعداد-اسم">الوضع</div>
+        <div class="صف-إعداد-شرح">الليلي أريح في المناوبة</div>
+      </div>
+      <div class="مجموعة-خيارات" id="خيارات-الوضع">
+        <button class="خيار" data-وضع="نهار" aria-pressed="false">نهار</button>
+        <button class="خيار" data-وضع="ليل" aria-pressed="false">ليل</button>
+      </div>
+    </div>
+    <div class="صف-إعداد">
+      <div>
+        <div class="صف-إعداد-اسم">طباعة أو حفظ PDF</div>
+        <div class="صف-إعداد-شرح">الجواب كاملًا بمصادره</div>
+      </div>
+      <div class="مجموعة-خيارات">
+        <button class="خيار" id="زر-طباعة">اطبع</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="بيانات/الفهرس.js?v=mtxw1pdv"></script>
+<script src="js/core/نطاق.js?v=mtxw1pdv"></script>
+<script src="js/core/تخزين.js?v=mtxw1pdv"></script>
+<script src="js/core/نص.js?v=mtxw1pdv"></script>
+<script src="js/data/مخزن.js?v=mtxw1pdv"></script>
+<script src="js/views/مشترك.js?v=mtxw1pdv"></script>
+<script src="js/views/رف.js?v=mtxw1pdv"></script>
+<script src="js/views/بيت.js?v=mtxw1pdv"></script>
+<script src="js/views/جواب.js?v=mtxw1pdv"></script>
+<script src="js/views/هامش.js?v=mtxw1pdv"></script>
+<script src="js/views/تظليل.js?v=mtxw1pdv"></script>
+<script src="js/views/تفاعل.js?v=mtxw1pdv"></script>
+<script src="js/views/بحث.js?v=mtxw1pdv"></script>
+<script src="js/views/جوال.js?v=mtxw1pdv"></script>
+<script src="js/app.js?v=mtxw1pdv"></script>
+</body>
+</html>
